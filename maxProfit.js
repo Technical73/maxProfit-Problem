@@ -8,22 +8,23 @@ const maxProfit = (totalTime, buildings) => {
 
   for (let t = 0; t <= totalTime; t++) {
     for (const b of buildings) {
-      const finish = t + b.time;
+      const finishTime = t + b.time;
 
-      if (finish <= totalTime) {
-        const operational = totalTime - finish;
-        const revenue = operational * b.earning;
-        const candidate = dp[t].profit + revenue;
+      if (finishTime <= totalTime) {
+        const remaining = totalTime - finishTime;
+        const revenue = b.earning * remaining;
 
-        if (candidate > dp[finish].profit) {
-          dp[finish] = { ...dp[t], profit: candidate };
-          dp[finish][b.name] += 1;
+        const newProfit = dp[t].profit + revenue;
+
+        if (newProfit > dp[finishTime].profit) {
+          dp[finishTime] = { ...dp[t], profit: newProfit };
+          dp[finishTime][b.name] += 1;
         }
       }
     }
   }
 
-  return dp.reduce((best, cur) => (cur.profit > best.profit ? cur : best));
+  return dp.reduce((a, b) => (a.profit > b.profit ? a : b));
 };
 
 const buildings = [
@@ -32,11 +33,12 @@ const buildings = [
   { name: "C", time: 10, earning: 3000 },
 ];
 
-const cases = [7, 8, 13];
-cases.forEach((n, i) => {
-  const r = maxProfit(n, buildings);
-  console.log(`\nTest Case ${i + 1}`);
-  console.log(`Time Unit: ${n}`);
-  console.log(`Earnings: $${r.profit}`);
-  console.log(`T: ${r.T}  P: ${r.P}  C: ${r.C}`);
+const testCases = [7, 8, 13];
+
+testCases.forEach((time, index) => {
+  const result = maxProfit(time, buildings);
+  console.log(`\nTest Case ${index + 1}`);
+  console.log(`Time Unit: ${time}`);
+  console.log(`Earnings: $${result.profit}`);
+  console.log(`Buildings → T: ${result.T}, P: ${result.P}, C: ${result.C}`);
 });
